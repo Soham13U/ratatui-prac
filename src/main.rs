@@ -28,7 +28,6 @@ fn main() -> io::Result<()> {
         background_progress: 0_f64,
     };
     let (event_tx, event_rx) = mpsc::channel::<CEvent>();
-    let app_result = app.run(&mut terminal, event_rx);
     let tx_to_input_events = event_tx.clone();
     thread::spawn(move || {
         handle_input_events(tx_to_input_events);
@@ -38,6 +37,7 @@ fn main() -> io::Result<()> {
         run_background_thread(tx_to_background);
     });
 
+    let app_result = app.run(&mut terminal, event_rx);
     ratatui::restore();
     app_result
 }
@@ -81,7 +81,7 @@ impl App {
                 CEvent::Progress(progress) => self.background_progress = progress,
             }
             terminal.draw(|frame| self.draw(frame))?;
-            self.handle_events().wrap_err("Handle events faield");
+            //         self.handle_events().wrap_err("Handle events faield");
         }
 
         Ok(())
